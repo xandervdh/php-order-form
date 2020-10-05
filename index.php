@@ -41,6 +41,19 @@ $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
 
+if (!empty($_SESSION['street'])){
+    $street = $_SESSION['street'];
+}
+if (!empty($_SESSION['streetNumber'])){
+    $streetNumber = $_SESSION['streetNumber'];
+}
+if (!empty($_SESSION['city'])){
+    $city = $_SESSION['city'];
+}
+if (!empty($_SESSION['zipCode'])){
+    $zipCode = $_SESSION['zipCode'];
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     if (empty($_POST["email"])) {
         $email = "";
@@ -59,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         if (!preg_match("/^[a-zA-Z-' ]*$/",$street)) {
             $streetClass = $error;
             $streetError = "* Only letters and white space allowed";
-        }
+        } else {$_SESSION['street'] = $street;}
     }
     if (empty($_POST["streetnumber"])) {
         $streetNumberClass = $error;
@@ -69,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         if (!is_numeric($streetNumber)){
             $streetNumberClass = $error;
             $streetNumberError = "* Only numbers allowed";
-        }
+        } else {$_SESSION['streetNumber'] = $streetNumber;}
     }
     if (empty($_POST["city"])) {
         $cityClass = $error;
@@ -79,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         if (!preg_match_all('/^[A-Za-z\\-]{1,}$/i',$city)){
             $cityClass = $error;
             $cityError = '* Only letters and dashes allowed';
-        }
+        } else {$_SESSION['city'] = $city;}
     }
     if (empty($_POST["zipcode"])) {
         $zipCodeClass = $error;
@@ -89,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         if (!is_numeric($zipCode)){
             $zipCodeClass = $error;
             $zipCodeError = "* Only numbers allowed";
-        }
+        } else {$_SESSION['zipCode'] = $zipCode;}
     }
     if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
         $succes = '<div class="alert alert-success" role="alert">
