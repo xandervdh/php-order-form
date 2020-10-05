@@ -36,14 +36,14 @@ $products = [
     ['name' => 'Ice-tea', 'price' => 3],
 ];
 $error = 'style="border-color: red"';
+$succes = "";
 $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     if (empty($_POST["email"])) {
-        $emailClass = $error;
-        $emailError = "* Email is required";
+        $email = "";
     } else {
         $email = check_input($_POST["email"]);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -90,6 +90,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $zipCodeClass = $error;
             $zipCodeError = "* Only numbers allowed";
         }
+    }
+    if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
+        $succes = '<div class="alert alert-success" role="alert">
+            Your order has been send
+            </div>';
     }
 }
 
