@@ -21,7 +21,7 @@ function whatIsHappening() {
 }
 
 //your products with their price.
-$products = [
+$food = [
     ['name' => 'Club Ham', 'price' => 3.20],
     ['name' => 'Club Cheese', 'price' => 3],
     ['name' => 'Club Cheese & Ham', 'price' => 4],
@@ -29,7 +29,7 @@ $products = [
     ['name' => 'Club Salmon', 'price' => 5]
 ];
 
-$products = [
+$drinks = [
     ['name' => 'Cola', 'price' => 2],
     ['name' => 'Fanta', 'price' => 2],
     ['name' => 'Sprite', 'price' => 2],
@@ -40,6 +40,15 @@ $succes = "";
 $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
+
+$products = $food;
+if (isset($_GET['food'])){
+    if ($_GET['food'] == "1"){
+        $products = $food;
+    } else {
+        $products = $drinks;
+    }
+}
 
 if (!empty($_SESSION['street'])){
     $street = $_SESSION['street'];
