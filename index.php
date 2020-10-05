@@ -113,10 +113,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $zipCodeError = "* Only numbers allowed";
         } else {$_SESSION['zipCode'] = $zipCode;}
     }
+
+    if (isset($_POST['express_delivery']) && $_POST['express_delivery'] == "5"){
+        $delivery = 'Your order will be delivered in 45 minutes';
+    } else {
+        $delivery = 'Your order will be delivered in 2 hours';
+    }
+
     if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
-        $succes = '<div class="alert alert-success" role="alert">
-            Your order has been send
-            </div>';
+        $succes = '<div class="alert alert-success" role="alert">'
+             . $delivery .
+            '</div>';
     }
 }
 
