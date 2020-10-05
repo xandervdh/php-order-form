@@ -144,6 +144,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
             }
         }
+        $message = 'Your order is sent to ' . $street . ' ' . $streetNumber;
+        $sendMail = mail($email, 'Your order', $message);
+        if($sendMail)
+        {
+            echo "Email Sent Successfully";
+        }
+        else
+
+        {
+            echo "Mail Failed";
+        }
     }
 }
 
