@@ -35,6 +35,8 @@ $drinks = [
     ['name' => 'Sprite', 'price' => 2],
     ['name' => 'Ice-tea', 'price' => 3],
 ];
+
+$totalValue = 0;
 $error = 'style="border-color: red"';
 $succes = "";
 $email = $street = $streetNumber = $city = $zipCode = "";
@@ -121,9 +123,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
-        $succes = '<div class="alert alert-success" role="alert">'
-             . $delivery .
+        $succes = '<div class="alert alert-success" role="alert">
+             Order send. ' . $delivery .
             '</div>';
+    }
+
+    for ($i = 0; $i < count($products); $i++){
+        if (isset($_POST['products'][$i])){
+            $totalValue += $products[$i]['price'];
+        }
     }
 }
 
@@ -133,7 +141,5 @@ function check_input($data) {
     $data = htmlspecialchars($data);
     return $data;
 }
-
-$totalValue = 0;
 
 require 'form-view.php';
