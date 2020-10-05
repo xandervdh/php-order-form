@@ -43,12 +43,19 @@ $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
 
-$products = $food;
+if (!isset($_SESSION['products'])){
+    $products = $food;
+} else {
+    $products = $_SESSION['products'];
+}
+
 if (isset($_GET['food'])){
     if ($_GET['food'] == "1"){
         $products = $food;
+        $_SESSION['products'] = $food;
     } else {
         $products = $drinks;
+        $_SESSION['products'] = $drinks;
     }
 }
 
@@ -126,11 +133,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         $succes = '<div class="alert alert-success" role="alert">
              Order send. ' . $delivery .
             '</div>';
-    }
-
-    for ($i = 0; $i < count($products); $i++){
-        if (isset($_POST['products'][$i])){
-            $totalValue += $products[$i]['price'];
+        for ($i = 0; $i < count($products); $i++){
+            if (isset($_POST['products'][$i])){
+                $totalValue += $products[$i]['price'];
+            }
         }
     }
 }
