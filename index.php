@@ -36,7 +36,12 @@ $drinks = [
     ['name' => 'Ice-tea', 'price' => 3],
 ];
 
-$totalValue = 0;
+if (isset($_COOKIE['totalValue'])){
+    $totalValue = $_COOKIE['totalValue'];
+} else {
+    $totalValue = 0;
+}
+
 $error = 'style="border-color: red"';
 $succes = "";
 $email = $street = $streetNumber = $city = $zipCode = "";
@@ -136,6 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         for ($i = 0; $i < count($products); $i++){
             if (isset($_POST['products'][$i])){
                 $totalValue += $products[$i]['price'];
+                setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
             }
         }
     }
