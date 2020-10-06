@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         }
         $totalValue += $total;
         setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
-        $message = "Your order is sent to:\n"  . $street . ' ' . $streetNumber . "\n" . $city . ' ' . $zipCode . "\nYou ordered:\n";
+        $message = "Your order is sent to:\nStreet: "  . $street . ' Street number: ' . $streetNumber . "\nCity: " . $city . ' Zipcode: ' . $zipCode . "\nYou ordered:\n";
         for ($i = 0; $i < count($order); $i++){
             $message .= $order[$i] . "\n";
         }
@@ -170,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         $headers .= "X-MSMail-Priority: High\r\n";
         $headers .= "X-Mailer: PHP". phpversion() ."\r\n";
         //mail($email, 'Your order', $message, $headers);
-        //mail(owner@sandwish-shop.be, 'Your order', $message . ' new order', $headers);
+        //mail(owner@sandwish-shop.be, 'Your order', $message . ' new order!!', $headers);
     }
 }
 
