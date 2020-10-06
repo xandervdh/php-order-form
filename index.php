@@ -127,11 +127,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $zipCodeError = "* Only numbers allowed";
         } else {$_SESSION['zipCode'] = $zipCode;}
     }
-
+    date_default_timezone_set('Europe/Brussels');
     if (isset($_POST['express_delivery']) && $_POST['express_delivery'] == "5"){
-        $delivery = 'Your order will be delivered in 45 minutes';
+        $new_time = date("H:i", strtotime('+45 minutes'));
+        $delivery = 'Your order will be delivered at ' . $new_time;
     } else {
-        $delivery = 'Your order will be delivered in 2 hours';
+        $new_time = date("H:i", strtotime('+2 hours'));
+        $delivery = 'Your order will be delivered at ' . $new_time;
     }
 
     if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
@@ -145,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
         $message = 'Your order is sent to ' . $street . ' ' . $streetNumber;
-        $sendMail = mail($email, 'Your order', $message);
+        $sendMail = mail($email, 'Your order', $message, $headers);
         if($sendMail)
         {
             echo "Email Sent Successfully";
