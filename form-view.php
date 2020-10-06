@@ -87,6 +87,7 @@
         <button type="submit" class="btn btn-primary">Order!</button>
     </form>
 
+    <div>Total: <strong>€ <?php echo $total; ?> </strong></div><br>
     <footer>You already ordered <strong>&euro; <?php echo $totalValue; ?></strong> in food and drinks.</footer>
 </div>
 

@@ -45,6 +45,7 @@ if (isset($_COOKIE['totalValue'])){
 $error = 'style="border-color: red"';
 $succes = "";
 $express = "";
+$total = 0;
 $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
@@ -146,11 +147,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         for ($i = 0; $i < count($products); $i++){
             if (isset($_POST['products'][$i])){
                 array_push($order, $products[$i]['name']);
-                $totalValue += $products[$i]['price'];
-
-                setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
+                $total += $products[$i]['price'];
             }
         }
+        $totalValue += $total;
+        setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
         $message = "Your order is sent to:\n"  . $street . ' ' . $streetNumber . "\n" . $city . ' ' . $zipCode . "\nYou ordered:\n";
         for ($i = 0; $i < count($order); $i++){
             $message .= $order[$i] . "\n";
