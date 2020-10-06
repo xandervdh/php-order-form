@@ -44,6 +44,7 @@ if (isset($_COOKIE['totalValue'])){
 
 $error = 'style="border-color: red"';
 $succes = "";
+$express = "";
 $email = $street = $streetNumber = $city = $zipCode = "";
 $emailError = $streetError = $streetNumberError = $cityError = $zipCodeError = "";
 $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "";
@@ -131,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     if (isset($_POST['express_delivery']) && $_POST['express_delivery'] == "5"){
         $new_time = date("H:i", strtotime('+45 minutes'));
         $delivery = 'Your order will be delivered at ' . $new_time;
+        $express = "5";
     } else {
         $new_time = date("H:i", strtotime('+2 hours'));
         $delivery = 'Your order will be delivered at ' . $new_time;
@@ -140,23 +142,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         $succes = '<div class="alert alert-success" role="alert">
              Order send. ' . $delivery .
             '</div>';
+        $order = array();
         for ($i = 0; $i < count($products); $i++){
             if (isset($_POST['products'][$i])){
+                array_push($order, $products[$i]['name']);
                 $totalValue += $products[$i]['price'];
+
                 setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/");
             }
         }
-        $message = 'Your order is sent to ' . $street . ' ' . $streetNumber;
-        $sendMail = mail($email, 'Your order', $message, $headers);
-        if($sendMail)
-        {
-            echo "Email Sent Successfully";
+        $message = "Your order is sent to:\n"  . $street . ' ' . $streetNumber . "\n" . $city . ' ' . $zipCode . "\nYou ordered:\n";
+        for ($i = 0; $i < count($order); $i++){
+            $message .= $order[$i] . "\n";
         }
-        else
-
-        {
-            echo "Mail Failed";
+        $message .= "Total: €" . $totalValue . "\nexpress delivery: ";
+        if ($express == "5"){
+            $message .= 'Yes €5';
+        } else {
+            $message .= 'No';
         }
+        $message .= "\nYour order will arive at " . $new_time;
+        $headers = "";
+        $headers .= "Organization: Sender Organization\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/plain; charset=iso-8859-1\r\n";
+        $headers .= "X-MSMail-Priority: High\r\n";
+        $headers .= "X-Mailer: PHP". phpversion() ."\r\n";
+        //mail($email, 'Your order', $message, $headers);
+        //mail(owner@sandwish-shop.be, 'Your order', $message . ' new order', $headers);
     }
 }
 
