@@ -22,26 +22,11 @@ function whatIsHappening() {
     var_dump($_SESSION);
 }
 
-//your products with their price.
+//making a new class
 class menu{
     public $name = array();
     public $price = array();
 }
-
-/*$food = [
-    ['name' => 'Club Ham', 'price' => 3.20],
-    ['name' => 'Club Cheese', 'price' => 3],
-    ['name' => 'Club Cheese & Ham', 'price' => 4],
-    ['name' => 'Club Chicken', 'price' => 4],
-    ['name' => 'Club Salmon', 'price' => 5]
-];
-
-$drinks = [
-    ['name' => 'Cola', 'price' => 2],
-    ['name' => 'Fanta', 'price' => 2],
-    ['name' => 'Sprite', 'price' => 2],
-    ['name' => 'Ice-tea', 'price' => 3],
-];*/
 
 //declaring the variables
 $products = new menu();
@@ -171,9 +156,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
         $order = array(); //declare order array
         for ($i = 0; $i < count($products->name); $i++){
-            if (isset($_POST['products'][$i])){ //check if the product is checked
-                array_push($order, $products->name[$i]); //push checked product to order array
-                $total += $products->price[$i]; //add price of checked product to total
+            if (isset($_POST['products'][$i]) && $_POST['products'][$i] != "0"){ //check if the product is checked
+                for ($x = 0; $x < $_POST['products'][$i]; $x++){
+                    array_push($order, $products->name[$i]); //push checked product to order array
+                    $total += $products->price[$i]; //add price of checked product to total
+                }
             }
         }
         $totalValue += $total; //add the total to the total ever spend
@@ -208,5 +195,5 @@ function check_input($data) {
     $data = htmlspecialchars($data); //changes html elements to characters
     return $data;
 }
-
+whatIsHappening();
 require 'form-view.php';

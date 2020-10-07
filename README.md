@@ -10,7 +10,7 @@ you can see the excersize [here](https://github.com/becodeorg/atw-giertz-3-23/tr
 - [x] calculate delivery time
 - [x] total revenue counter and save in cookie
 - [x] send email
-- [ ] change checkboxes to input field for products
+- [x] change checkboxes to input field for products
 - [ ] make it possible to order drinks and food in the same order
 - [x] use objects instead of arrays
  

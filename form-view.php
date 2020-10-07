@@ -73,7 +73,7 @@
             <legend>Products</legend>
             <?php for ($i = 0; $i < count($products->name); $i++){ ?>
                 <label>
-                    <input type="checkbox" value="1" name="products[<?php echo $i ?>]"/> <?php echo $products->name[$i] ?>
+                    <input type="text" value="0" name="products[<?php echo $i ?>]"/> <?php echo $products->name[$i] ?>
                     -
                     &euro; <?php echo number_format($products->price[$i], 2) ?></label><br/>
             <?php } ?>
