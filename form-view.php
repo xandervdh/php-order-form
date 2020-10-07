@@ -23,15 +23,15 @@
         </ul>
     </nav>
     <?php
-    echo $succes;
+    echo $succes; //show the succes message
     ?>
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="email">E-mail:</label>
                 <input type="text" id="email" name="email" class="form-control"
-                       value="<?php echo $email ?>" <?php echo $emailClass ?>>
-                <span class="text-danger"><?php echo $emailError; ?></span>
+                       value="<?php echo $email ?>" <?php echo $emailClass ?>> <!-- autofill the value and add a error styling -->
+                <span class="text-danger"><?php echo $emailError; ?></span> <!-- error placement -->
             </div>
             <div></div>
         </div>
@@ -71,12 +71,12 @@
 
         <fieldset>
             <legend>Products</legend>
-            <?php foreach ($products as $i => $product): ?>
+            <?php for ($i = 0; $i < count($products->name); $i++){ ?>
                 <label>
-                    <input type="checkbox" value="1" name="products[<?php echo $i ?>]"/> <?php echo $product['name'] ?>
+                    <input type="checkbox" value="1" name="products[<?php echo $i ?>]"/> <?php echo $products->name[$i] ?>
                     -
-                    &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
-            <?php endforeach; ?>
+                    &euro; <?php echo number_format($products->price[$i], 2) ?></label><br/>
+            <?php } ?>
         </fieldset>
 
         <label>
