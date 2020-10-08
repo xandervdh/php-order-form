@@ -33,6 +33,7 @@ $products = new menu();
 $cart = "";
 $succes = "";
 $order = array();
+$prices = array();
 $express = "";
 $total = 0;
 $email = $street = $streetNumber = $city = $zipCode = "";
@@ -50,10 +51,12 @@ if (isset($_SESSION['order'])){
     $order = $_SESSION['order'];
 }
 
+if (isset($_SESSION['prices'])) {
+    $prices = $_SESSION['prices'];
+}
+
 if (isset($_SESSION['total'])){
     $total = $_SESSION['total'];
-} else {
-    $total = 0;
 }
 
 //check if there is a cookie set
@@ -201,6 +204,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             unset($_SESSION['order']);
             unset($_SESSION['total']);
+            unset($_SESSION['cart']);
+            unset($_SESSION['prices']);
 
             $totalValue += $total; //add the total to the total ever spend
             $total = 0;
@@ -235,19 +240,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['products'][$i]) && $_POST['products'][$i] != "0") { //check if the product is more than 0
                 for ($x = 0; $x < $_POST['products'][$i]; $x++) {
                     array_push($order, $products->name[$i]); //push product to order array
+                    array_push($prices, $products->price[$i]); //push price to prices array
                     $total += $products->price[$i]; //add price of product to total
                 }
             }
             $_SESSION['order'] = $order;
             $_SESSION['total'] = $total;
+            $_SESSION['prices'] = $prices;
         }
         var_dump($order);
         $cart = "Your cart:<br>";
         for ($i = 0; $i < count($order);$i++){
-            $cart .= $order[$i] . "<br>";
+            $cart .= $order[$i] . " €" . $prices[$i] . "<br>";
         }
         $_SESSION['cart'] = $cart;
     }
 }
-whatIsHappening();
+
 require 'form-view.php';
