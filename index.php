@@ -30,7 +30,9 @@ class menu{
 
 //declaring the variables
 $products = new menu();
+$cart = "";
 $succes = "";
+$order = array();
 $express = "";
 $total = 0;
 $email = $street = $streetNumber = $city = $zipCode = "";
@@ -40,6 +42,20 @@ $emailClass = $streetClass = $streetNumberClass = $cityClass = $zipCodeClass = "
 //error style variable
 $error = 'style="border-color: red"';
 
+if (isset($_SESSION['cart'])){
+    $cart = $_SESSION['cart'];
+}
+
+if (isset($_SESSION['order'])){
+    $order = $_SESSION['order'];
+}
+
+if (isset($_SESSION['total'])){
+    $total = $_SESSION['total'];
+} else {
+    $total = 0;
+}
+
 //check if there is a cookie set
 if (isset($_COOKIE['totalValue'])){
     $totalValue = $_COOKIE['totalValue'];
@@ -47,12 +63,15 @@ if (isset($_COOKIE['totalValue'])){
     $totalValue = 0;
 }
 
+
+
 //check whitch products where selected
-if (!isset($_SESSION['products'])){
+if (isset($_SESSION['products'])){
+    $products = $_SESSION['products'];
+} else {
+    $products = new menu();
     array_push($products->name, 'Club Ham', 'Club Cheese', 'Club Cheese & Ham', 'Club Chicken', 'Club Salmon');
     array_push($products->price, 3.20, 3, 4, 4, 5);
-} else {
-    $products = $_SESSION['products'];
 }
 
 //make $products the chosen products (food or drinks)
@@ -84,116 +103,151 @@ if (!empty($_SESSION['zipCode'])){
     $zipCode = $_SESSION['zipCode'];
 }
 
-//do things if there is a POST request
-if ($_SERVER["REQUEST_METHOD"] == "POST"){
-    if (empty($_POST["email"])) { //check if input is empty
-        $email = "";
-    } else {
-        $email = check_input($_POST["email"]);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { //check if input has a valid email
-            $emailClass = $error; //give error style
-            $emailError = "* Invalid email format"; //give error message
-        }
-    }
-    if (empty($_POST["street"])) {
-        $streetClass = $error;
-        $streetError = "* Street is required";
-    } else {
-        $street = check_input($_POST["street"]);
-        if (!preg_match("/^[a-zA-Z-' ]*$/",$street)) {
-            $streetClass = $error;
-            $streetError = "* Only letters and white space allowed";
-        } else {$_SESSION['street'] = $street;} //if there are no errors put $street in a session
-    }
-    if (empty($_POST["streetnumber"])) {
-        $streetNumberClass = $error;
-        $streetNumberError = "* Streetnumber is required";
-    } else {
-        $streetNumber = check_input($_POST["streetnumber"]);
-        if (!is_numeric($streetNumber)){
-            $streetNumberClass = $error;
-            $streetNumberError = "* Only numbers allowed";
-        } else {$_SESSION['streetNumber'] = $streetNumber;}
-    }
-    if (empty($_POST["city"])) {
-        $cityClass = $error;
-        $cityError = "* City is required";
-    } else {
-        $city = check_input($_POST["city"]);
-        if (!preg_match_all('/^[A-Za-z\\-]{1,}$/i',$city)){
-            $cityClass = $error;
-            $cityError = '* Only letters and dashes allowed';
-        } else {$_SESSION['city'] = $city;}
-    }
-    if (empty($_POST["zipcode"])) {
-        $zipCodeClass = $error;
-        $zipCodeError = "* Zipcode is required";
-    } else {
-        $zipCode = check_input($_POST["zipcode"]);
-        if (!is_numeric($zipCode)){
-            $zipCodeClass = $error;
-            $zipCodeError = "* Only numbers allowed";
-        } else {$_SESSION['zipCode'] = $zipCode;}
-    }
-
-    //do if there are no errors
-    if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == ""){
-        date_default_timezone_set('Europe/Brussels'); //set timezone
-        if (isset($_POST['express_delivery'])){ //if express delivery is checked
-            $new_time = date("H:i", strtotime('+45 minutes')); //current time + 45 minutes
-            $delivery = 'Your order will be delivered at ' . $new_time;
-            $total += 5;
-            $express = "5";
-        } else {
-            $new_time = date("H:i", strtotime('+2 hours')); //current time + 2 hours
-            $delivery = 'Your order will be delivered at ' . $new_time;
-        }
-
-        //create the succes message
-        $succes = '<div class="alert alert-success" role="alert">
-             Order send. ' . $delivery .
-            '</div>';
-
-        $order = array(); //declare order array
-        for ($i = 0; $i < count($products->name); $i++){
-            if (isset($_POST['products'][$i]) && $_POST['products'][$i] != "0"){ //check if the product is checked
-                for ($x = 0; $x < $_POST['products'][$i]; $x++){
-                    array_push($order, $products->name[$i]); //push checked product to order array
-                    $total += $products->price[$i]; //add price of checked product to total
-                }
-            }
-        }
-        $totalValue += $total; //add the total to the total ever spend
-        setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/"); //set coockie for total value
-        //creating the email message
-        $message = "Your order is sent to:\nStreet: "  . $street . ' Street number: ' . $streetNumber . "\nCity: " . $city . ' Zipcode: ' . $zipCode . "\nYou ordered:\n";
-        for ($i = 0; $i < count($order); $i++){
-            $message .= $order[$i] . "\n";
-        }
-        $message .= "Total: €" . $totalValue . "\nexpress delivery: ";
-        if ($express == "5"){
-            $message .= 'Yes €5';
-        } else {
-            $message .= 'No';
-        }
-        $message .= "\nYour order will arive at " . $new_time;
-        //creating the email headers
-        $headers = "";
-        $headers .= "Organization: Sender Organization\r\n";
-        $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/plain; charset=iso-8859-1\r\n";
-        $headers .= "X-MSMail-Priority: High\r\n";
-        $headers .= "X-Mailer: PHP". phpversion() ."\r\n";
-        //mail($email, 'Your order', $message, $headers); //send email to client
-        //mail(owner@sandwish-shop.be, 'Your order', $message . ' new order!!', $headers); //send email to shop
-    }
-}
-
 function check_input($data) {
     $data = trim($data); //remove whitespace from beginning and end of input
     $data = stripslashes($data); //remove slashes
     $data = htmlspecialchars($data); //changes html elements to characters
     return $data;
+}
+
+//do things if there is a POST request
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['order'])) {
+        if (empty($_POST["email"])) { //check if input is empty
+            $email = "";
+        } else {
+            $email = check_input($_POST["email"]);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { //check if input has a valid email
+                $emailClass = $error; //give error style
+                $emailError = "* Invalid email format"; //give error message
+            }
+        }
+        if (empty($_POST["street"])) {
+            $streetClass = $error;
+            $streetError = "* Street is required";
+        } else {
+            $street = check_input($_POST["street"]);
+            if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
+                $streetClass = $error;
+                $streetError = "* Only letters and white space allowed";
+            } else {
+                $_SESSION['street'] = $street;
+            } //if there are no errors put $street in a session
+        }
+        if (empty($_POST["streetnumber"])) {
+            $streetNumberClass = $error;
+            $streetNumberError = "* Streetnumber is required";
+        } else {
+            $streetNumber = check_input($_POST["streetnumber"]);
+            if (!is_numeric($streetNumber)) {
+                $streetNumberClass = $error;
+                $streetNumberError = "* Only numbers allowed";
+            } else {
+                $_SESSION['streetNumber'] = $streetNumber;
+            }
+        }
+        if (empty($_POST["city"])) {
+            $cityClass = $error;
+            $cityError = "* City is required";
+        } else {
+            $city = check_input($_POST["city"]);
+            if (!preg_match_all('/^[A-Za-z\\-]{1,}$/i', $city)) {
+                $cityClass = $error;
+                $cityError = '* Only letters and dashes allowed';
+            } else {
+                $_SESSION['city'] = $city;
+            }
+        }
+        if (empty($_POST["zipcode"])) {
+            $zipCodeClass = $error;
+            $zipCodeError = "* Zipcode is required";
+        } else {
+            $zipCode = check_input($_POST["zipcode"]);
+            if (!is_numeric($zipCode)) {
+                $zipCodeClass = $error;
+                $zipCodeError = "* Only numbers allowed";
+            } else {
+                $_SESSION['zipCode'] = $zipCode;
+            }
+        }
+
+        //do if there are no errors
+        if ($emailError == "" && $streetError == "" && $streetNumberError == "" && $cityError == "" && $zipCodeError == "") {
+            date_default_timezone_set('Europe/Brussels'); //set timezone
+            if (isset($_POST['express_delivery'])) { //if express delivery is checked
+                $new_time = date("H:i", strtotime('+45 minutes')); //current time + 45 minutes
+                $delivery = 'Your order will be delivered at ' . $new_time;
+                $total += 5;
+                $express = "5";
+            } else {
+                $new_time = date("H:i", strtotime('+2 hours')); //current time + 2 hours
+                $delivery = 'Your order will be delivered at ' . $new_time;
+            }
+
+            //create the succes message
+            $succes = '<div class="alert alert-success" role="alert">
+             Order send. ' . $delivery .
+                '</div>';
+
+            /*$order = array(); //declare order array
+            for ($i = 0; $i < count($products->name); $i++){
+                if (isset($_POST['products'][$i]) && $_POST['products'][$i] != "0"){ //check if the product is checked
+                    for ($x = 0; $x < $_POST['products'][$i]; $x++){
+                        array_push($order, $products->name[$i]); //push checked product to order array
+                        $total += $products->price[$i]; //add price of checked product to total
+                    }
+                }
+            }*/
+
+            unset($_SESSION['order']);
+            unset($_SESSION['total']);
+
+            $totalValue += $total; //add the total to the total ever spend
+            $total = 0;
+            $cart = "";
+            setcookie("totalValue", strval($totalValue), time() + (86400 * 30), "/"); //set coockie for total value
+            //creating the email message
+            $message = "Your order is sent to:\nStreet: " . $street . ' Street number: ' . $streetNumber . "\nCity: " . $city . ' Zipcode: ' . $zipCode . "\nYou ordered:\n";
+            for ($i = 0; $i < count($order); $i++) {
+                $message .= $order[$i] . "\n";
+            }
+            $message .= "Total: €" . $totalValue . "\nexpress delivery: ";
+            if ($express == "5") {
+                $message .= 'Yes €5';
+            } else {
+                $message .= 'No';
+            }
+            $message .= "\nYour order will arive at " . $new_time;
+            //creating the email headers
+            $headers = "";
+            $headers .= "Organization: Sender Organization\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type: text/plain; charset=iso-8859-1\r\n";
+            $headers .= "X-MSMail-Priority: High\r\n";
+            $headers .= "X-Mailer: PHP" . phpversion() . "\r\n";
+            //mail($email, 'Your order', $message, $headers); //send email to client
+            //mail(owner@sandwish-shop.be, 'Your order', $message . ' new order!!', $headers); //send email to shop
+        }
+    }
+    if (isset($_POST['add'])) {
+
+        for ($i = 0; $i < count($products->name); $i++) {
+            if (isset($_POST['products'][$i]) && $_POST['products'][$i] != "0") { //check if the product is more than 0
+                for ($x = 0; $x < $_POST['products'][$i]; $x++) {
+                    array_push($order, $products->name[$i]); //push product to order array
+                    $total += $products->price[$i]; //add price of product to total
+                }
+            }
+            $_SESSION['order'] = $order;
+            $_SESSION['total'] = $total;
+        }
+        var_dump($order);
+        $cart = "Your cart:<br>";
+        for ($i = 0; $i < count($order);$i++){
+            $cart .= $order[$i] . "<br>";
+        }
+        $_SESSION['cart'] = $cart;
+    }
 }
 whatIsHappening();
 require 'form-view.php';

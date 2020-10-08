@@ -84,8 +84,10 @@
             Express delivery (+ 5 EUR)
         </label>
 
-        <button type="submit" class="btn btn-primary">Order!</button>
+        <input type="submit" class="btn btn-primary" name="add" value="Add to cart">
+        <input type="submit" class="btn btn-primary" name="order" value="Order!">
     </form>
+    <?php echo $cart; ?>
 
     <div>Total: <strong>€ <?php echo $total; ?> </strong></div><br>
     <footer>You already ordered <strong>&euro; <?php echo $totalValue; ?></strong> in food and drinks.</footer>
