@@ -248,10 +248,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['total'] = $total;
             $_SESSION['prices'] = $prices;
         }
-        var_dump($order);
         $cart = "Your cart:<br>";
         for ($i = 0; $i < count($order);$i++){
-            $cart .= $order[$i] . " €" . $prices[$i] . "<br>";
+            $cart .= $order[$i] . "- €" . $prices[$i] . "<br>";
         }
         $_SESSION['cart'] = $cart;
     }
